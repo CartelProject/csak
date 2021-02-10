@@ -22,11 +22,8 @@ class PaInstaller(Gtk.Window):
         self.recoveryreboot.connect("clicked", self.on_recovery_reboot)
         hbox.pack_start(self.recoveryreboot, True, True, 0)
         self.fastbootreboot = Gtk.Button(label='Reboot to Fastboot')        
-        self.shelladb = Gtk.Button(label='Move to ADB shell')
         self.fastbootreboot.connect("clicked", self.on_pa_click)
         hbox.pack_start(self.fastbootreboot, True, True, 0)
-        self.shelladb.connect("clicked", self.on_pa_adb)
-        hbox.pack_start(self.shelladb, True, True, 0)
 
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
@@ -62,10 +59,6 @@ class PaInstaller(Gtk.Window):
 
     def on_pa_click(self, widget):
         subprocess.run(['adb', 'reboot', 'bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-        dialog = self.Finished(self)
-
-    def on_pa_adb(self, widget):
-        subprocess.run(['adb', 'shell'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
     def on_recovery_reboot(self, widget):
