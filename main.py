@@ -19,6 +19,9 @@ class PaInstaller(Gtk.Window):
         self.aboutDevice = Gtk.Button(label='Check Connected Device')
         self.aboutDevice.connect("clicked", self.on_about_device)
         hbox.pack_start(self.aboutDevice, True, True, 0)
+        self.recoveryreboot = Gtk.Button(label='Reboot to Recovery')
+        self.recoveryreboot.connect("clicked", self.on_recovery_reboot)
+        hbox.pack_start(self.recoveryreboot, True, True, 0)
         self.fastbootreboot = Gtk.Button(label='Reboot to Fastboot')        
         self.shelladb = Gtk.Button(label='Move to ADB shell')
         self.fastbootreboot.connect("clicked", self.on_pa_click)
@@ -64,6 +67,10 @@ class PaInstaller(Gtk.Window):
 
     def on_pa_adb(self, widget):
         os.system('adb shell')
+        dialog = self.Finished(self)
+
+    def on_recovery_reboot(self, widget):
+        os.system('adb reboot recovery')
         dialog = self.Finished(self)
 
 win = PaInstaller()
