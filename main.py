@@ -8,9 +8,9 @@ def getDeviceCodename():
     result = subprocess.run(['adb', 'shell', 'getprop', 'ro.product.vendor.device'], stdout=subprocess.PIPE).stdout.decode('utf-8')
     return result.strip()
 
-class PaInstaller(Gtk.Window):
+class GMInstaller(Gtk.Window):
     def __init__(self):
-        Gtk.Window.__init__(self, title="Paranoid Installer")
+        Gtk.Window.__init__(self, title="Cartel Swiss Army Knife")
         self.set_border_width(10)
         hbox = Gtk.Box(spacing=6)
         hbox.set_orientation(Gtk.Orientation.VERTICAL)
@@ -22,7 +22,7 @@ class PaInstaller(Gtk.Window):
         self.recoveryreboot.connect("clicked", self.on_recovery_reboot)
         hbox.pack_start(self.recoveryreboot, True, True, 0)
         self.fastbootreboot = Gtk.Button(label='Reboot to Fastboot')
-        self.fastbootreboot.connect("clicked", self.on_pa_click)
+        self.fastbootreboot.connect("clicked", self.on_fastboot_click)
         hbox.pack_start(self.fastbootreboot, True, True, 0)
         self.recoveryFlash = Gtk.Button(label='Flash a recovery image')
         self.recoveryFlash.connect("clicked", self.on_recovery_flash)
@@ -30,6 +30,7 @@ class PaInstaller(Gtk.Window):
 
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
+
             transient_for=self,
             flags=0,
             message_type=Gtk.MessageType.INFO,
@@ -60,7 +61,7 @@ class PaInstaller(Gtk.Window):
 
         dialog.destroy()
 
-    def on_pa_click(self, widget):
+    def on_fastboot_click(self, widget):
         subprocess.run(['adb', 'reboot', 'bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
@@ -117,7 +118,7 @@ class PaInstaller(Gtk.Window):
 
         dialog.destroy()
 
-win = PaInstaller()
+win = GMInstaller()
 win.connect("destroy",Gtk.main_quit)
 
 win.show_all()
