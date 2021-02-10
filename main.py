@@ -1,5 +1,4 @@
 import gi
-import os
 import subprocess
 
 gi.require_version("Gtk","3.0")
@@ -62,15 +61,15 @@ class PaInstaller(Gtk.Window):
         dialog.destroy()
 
     def on_pa_click(self, widget):
-        os.system('adb reboot bootloader')
+        subprocess.run(['adb', 'reboot', 'bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
     def on_pa_adb(self, widget):
-        os.system('adb shell')
+        subprocess.run(['adb', 'shell'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
     def on_recovery_reboot(self, widget):
-        os.system('adb reboot recovery')
+        subprocess.run(['adb', 'reboot', 'recovery'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
 win = PaInstaller()
