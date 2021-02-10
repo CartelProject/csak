@@ -14,16 +14,17 @@ class PaInstaller(Gtk.Window):
         Gtk.Window.__init__(self, title="Paranoid Installer")
         self.set_border_width(10)
         hbox = Gtk.Box(spacing=6)
+        hbox.set_orientation(Gtk.Orientation.VERTICAL)
         self.add(hbox)
         self.aboutDevice = Gtk.Button(label='Check Connected Device')
         self.aboutDevice.connect("clicked", self.on_about_device)
         hbox.pack_start(self.aboutDevice, True, True, 0)
-        self.button = Gtk.Button(label='Reboot to Fastboot')
-        self.button2 = Gtk.Button(label='Move to ADB shell')
-        self.button.connect("clicked", self.on_pa_click)
-        hbox.pack_start(self.button, True, True, 0)
-        self.button2.connect("clicked", self.on_pa_adb)
-        hbox.pack_start(self.button2, True, True, 0)
+        self.fastbootreboot = Gtk.Button(label='Reboot to Fastboot')        
+        self.shelladb = Gtk.Button(label='Move to ADB shell')
+        self.fastbootreboot.connect("clicked", self.on_pa_click)
+        hbox.pack_start(self.fastbootreboot, True, True, 0)
+        self.shelladb.connect("clicked", self.on_pa_adb)
+        hbox.pack_start(self.shelladb, True, True, 0)
 
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
@@ -40,7 +41,6 @@ class PaInstaller(Gtk.Window):
         print("Task dialog closed")
 
         dialog.destroy()
-
 
     def Finished(self, widget):
         dialog = Gtk.MessageDialog(
