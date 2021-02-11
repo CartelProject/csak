@@ -159,7 +159,7 @@ class GMInstaller(Gtk.Window):
             print("WARN dialog closed by clicking OK button")
             subprocess.run(['adb','reboot','bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
             time.sleep(10)
-            subprocess.run(['fastboot','-w'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            subprocess.run(['fastboot','erase','userdata'], stdout=subprocess.PIPE).stdout.decode('utf-8')
             time.sleep(10)
             subprocess.run(['fastboot','reboot','recovery'], stdout=subprocess.PIPE).stdout.decode('utf-8')
             dialog = Gtk.MessageDialog(
