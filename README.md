@@ -38,7 +38,7 @@ python3 csak/main.py
 - Toggling device display on or off depending on phone state for phones with a broken power button
 
 ### Screenshot:
-![CSAK](/assets/screenshot.jpg)
+![CSAK](/assets/screenshot.png)
 
 ### In The Future
 - Will add support for fastboot flashing IMGs for system, vendor, odm and other partitions respectively.
