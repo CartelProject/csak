@@ -1,7 +1,7 @@
 ![CSAK](/assets/banner.jpg)
 #### An easy-to-use, plug-and-play device management script for Android devices.
 Language: Python 3.8.x <br>
-Platform: Linux/GTK 3.0 (tested on Gnome)
+Platform: Linux/macOS with GTK 3.0 installed
 
 ```
 /*
@@ -18,6 +18,11 @@ Platform: Linux/GTK 3.0 (tested on Gnome)
 git clone https://github.com/CartelProject/csak csak
 ```
 - Install Android SDK tools on Linux. A simple Google search can help you out.
+- Install gi package or gtk 3.0 if you haven't yet
+- For macOS users, to install gtk 3.0
+```
+brew install pygobject3 gtk+3
+```
 - If you have not installed Python yet, install Python 3.8.x or above on your PC.
 - Run the following command to run the Python+GTK3.0 script:
 ```
