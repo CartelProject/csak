@@ -9,6 +9,10 @@ def getDeviceCodename():
     result = subprocess.run(['adb', 'shell', 'getprop', 'ro.product.vendor.device'], stdout=subprocess.PIPE).stdout.decode('utf-8')
     return result.strip()
 
+def isAbDevice():
+    result = subprocess.run(['adb', 'shell', 'getprop', 'ro.boot.slot_suffix"'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    return result.strip() is not None
+
 class GMInstaller(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Cartel Swiss Army Knife")
@@ -33,6 +37,9 @@ class GMInstaller(Gtk.Window):
         self.romFlash = Gtk.Button(label='Flash a ROM using sideload')
         self.romFlash.connect("clicked", self.on_rom_flash)
         hbox.pack_start(self.romFlash, True, True, 0)
+        self.dataWipe = Gtk.Button(label='Wipe userdata')
+        self.dataWipe.connect("clicked", self.on_data_wipe)
+        hbox.pack_start(self.dataWipe, True, True, 0)
 
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
@@ -118,7 +125,13 @@ class GMInstaller(Gtk.Window):
         if response == Gtk.ResponseType.OK:
             print("WARN dialog closed by clicking OK button")
             print(final)
-            subprocess.run(['fastboot','flash','recovery',final], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            subprocess.run(['adb', 'reboot', 'bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            time.sleep(10)
+            if isAbDevice():
+                recovery_partition = 'boot'
+            else:
+                recovery_partition = 'recovery'
+            subprocess.run(['fastboot','flash',recovery_partition,final], stdout=subprocess.PIPE).stdout.decode('utf-8')
         elif response == Gtk.ResponseType.CANCEL:
             print("WARN dialog closed by clicking CANCEL button")
 
@@ -129,6 +142,44 @@ class GMInstaller(Gtk.Window):
         filter_text.set_name("ZIP files")
         filter_text.add_mime_type("application/zip")
         dialog.add_filter(filter_text)
+
+    def on_data_wipe(self, dialog):
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.OK_CANCEL,
+            text="Caution",
+        )
+        dialog.format_secondary_text(
+            "The changes made are irreversible! Do you want to continue?"
+        )
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            print("WARN dialog closed by clicking OK button")
+            subprocess.run(['adb','reboot','bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            time.sleep(10)
+            subprocess.run(['fastboot','-w'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            time.sleep(10)
+            subprocess.run(['fastboot','reboot','recovery'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            dialog = Gtk.MessageDialog(
+                transient_for=self,
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text="Task completed successfully",
+            )
+            dialog.format_secondary_text(
+                "Your phone should auto reboot to recovery in a few seconds. If it doesn't, reboot forcefully after the process on your device has completed, or if it bootloops, try to flash the correct package and try again."
+            )
+            dialog.run()
+            print("INFO dialog closed")
+
+            dialog.destroy()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("WARN dialog closed by clicking CANCEL button")
+
+        dialog.destroy()
 
     def on_rom_flash(self, dialog):
         dialog = Gtk.FileChooserDialog(
