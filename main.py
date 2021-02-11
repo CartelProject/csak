@@ -16,6 +16,8 @@ class GMInstaller(Gtk.Window):
         hbox = Gtk.Box(spacing=6)
         hbox.set_orientation(Gtk.Orientation.VERTICAL)
         self.add(hbox)
+        img = Gtk.Image.new_from_file('logo.jpg')
+        hbox.pack_start(img, True, True, 0)
         self.aboutDevice = Gtk.Button(label='Check Connected Device')
         self.aboutDevice.connect("clicked", self.on_about_device)
         hbox.pack_start(self.aboutDevice, True, True, 0)
