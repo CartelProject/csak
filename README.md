@@ -1,8 +1,7 @@
-#### An easy-to-use, plug-and-play swiss army knife for Android devices.
+![CSAK](/assets/banner.jpg)
+#### An easy-to-use, plug-and-play device management script for Android devices.
 Language: Python 3.8.x <br>
 Platform: Linux/GTK 3.0 (tested on Gnome)
-
-### A work in progress.
 
 ```
 /*
@@ -13,4 +12,32 @@ Platform: Linux/GTK 3.0 (tested on Gnome)
  */
 ```
 
-- Supports A-only devices at the moment
+### Installation and Running:
+- Clone this repository to your desired location.
+``` 
+git clone https://github.com/CartelProject/csak csak
+```
+- Install Android SDK tools on Linux. A simple Google search can help you out.
+- If you have not installed Python yet, install Python 3.8.x or above on your PC.
+- Run the following command to run the Python+GTK3.0 script:
+```
+python3 csak/main.py
+```
+
+### Features:
+- ROMs, ZIP installer (works with any recovery that supports ADB sideload)
+- Easy recovery installer
+- Userdata wipe
+- Detection of connected device (codename detection)
+- Reboot to recovery and fastboot using one click
+
+### Screenshot:
+![CSAK](/assets/screenshot.jpg)
+
+### In The Future
+- Will add support for fastboot flashing IMGs for system, vendor, odm and other partitions respectively.
+- Fix a bug where the script hangs due to process not completeing in time. Do not worry, if it hangs, DO NOT CANCEL THE SCRIPT OR FORCE CLOSE, OR IT MIGHT BRICK YOUR DEVICE IN THE PROCESS. Let the script complete, and check the terminal for progress.
+- Will add support for automatic TWRP downloading and flashing depending on the codename
+
+##### If you like my work, please consider donating!
+###### Support email: malvi@aospa.co
