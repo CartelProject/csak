@@ -40,6 +40,9 @@ class GMInstaller(Gtk.Window):
         self.dataWipe = Gtk.Button(label='Wipe userdata')
         self.dataWipe.connect("clicked", self.on_data_wipe)
         hbox.pack_start(self.dataWipe, True, True, 0)
+        self.sendPowerKeycode = Gtk.Button(label='Turn on/off display')
+        self.sendPowerKeycode.connect("clicked", self.on_keycode_power)
+        hbox.pack_start(self.sendPowerKeycode, True, True, 0)
 
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
@@ -80,6 +83,10 @@ class GMInstaller(Gtk.Window):
 
     def on_recovery_reboot(self, widget):
         subprocess.run(['adb', 'reboot', 'recovery'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        dialog = self.Finished(self)
+
+    def on_keycode_power(self, widget):
+        subprocess.run(['adb','shell','input','keyevent','KEYCODE_POWER'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
     def add_filters_recovery(self, dialog):
