@@ -30,6 +30,7 @@ python3 csak/main.py
 - Userdata wipe
 - Detection of connected device (codename detection)
 - Reboot to recovery and fastboot using one click
+- Toggling device display on or off depending on phone state for phones with a broken power button
 
 ### Screenshot:
 ![CSAK](/assets/screenshot.jpg)
