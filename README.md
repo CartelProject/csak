@@ -36,9 +36,20 @@ python3 csak/main.py
 - Detection of connected device (codename detection)
 - Reboot to recovery and fastboot using one click
 - Toggling device display on or off depending on phone state for phones with a broken power button
+- Connect to ADB via WiFi
+- Disconnect all WiFi ADB connected devices 
+- Now screencast your phone's display onto your laptop easily
+
 
 ### Screenshot:
 ![CSAK](/assets/screenshot.png)
+
+### Known Issues:
+- Screencast hangs after you close ffplay window
+```
+WORKAROUND
+- Ctrl+C in terminal window after you have closed ffplay window
+```
 
 ### In The Future
 - Will add support for fastboot flashing IMGs for system, vendor, odm and other partitions respectively.
