@@ -1,6 +1,7 @@
 import gi
 import subprocess
 import time
+import os
 
 gi.require_version("Gtk","3.0")
 from gi.repository import Gtk
@@ -13,6 +14,28 @@ def isAbDevice():
     result = subprocess.run(['adb', 'shell', 'getprop', 'ro.boot.slot_suffix"'], stdout=subprocess.PIPE).stdout.decode('utf-8')
     return result.strip() is not None
 
+def get_adb(parent, message, title=''):
+    dialogWindow = Gtk.MessageDialog(parent,
+                      Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                      Gtk.MessageType.QUESTION,
+                      Gtk.ButtonsType.OK_CANCEL,
+                      message)
+    dialogWindow.set_title(title)
+    dialogWindow.set_border_width(10)
+    dialogBox = dialogWindow.get_content_area()
+    userEntry = Gtk.Entry()
+    userEntry.set_visibility(True)
+    userEntry.set_size_request(250,0)
+    dialogBox.pack_end(userEntry, False, False, 0)
+    dialogWindow.show_all()
+    response = dialogWindow.run()
+    text = userEntry.get_text() 
+    dialogWindow.destroy()
+    if (response == Gtk.ResponseType.OK) and (text != ''):
+        return text
+    else:
+        return None    
+        
 class GMInstaller(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Cartel Swiss Army Knife")
@@ -32,7 +55,7 @@ class GMInstaller(Gtk.Window):
         self.recoveryFlash = Gtk.Button(label='Flash a recovery image')
         self.recoveryFlash.connect("clicked", self.on_recovery_flash)
         hbox.pack_start(self.recoveryFlash, True, True, 0)
-        self.romFlash = Gtk.Button(label='Flash a ROM using sideload')
+        self.romFlash = Gtk.Button(label='Flash a ZIP using sideload')
         self.romFlash.connect("clicked", self.on_rom_flash)
         hbox.pack_start(self.romFlash, True, True, 0)
         self.dataWipe = Gtk.Button(label='Wipe userdata')
@@ -41,7 +64,16 @@ class GMInstaller(Gtk.Window):
         self.sendPowerKeycode = Gtk.Button(label='Turn on/off display')
         self.sendPowerKeycode.connect("clicked", self.on_keycode_power)
         hbox.pack_start(self.sendPowerKeycode, True, True, 0)
-
+        self.sendScreencast = Gtk.Button(label='Cast screen of connected device')
+        self.sendScreencast.connect("clicked", self.on_screencast)
+        hbox.pack_start(self.sendScreencast, True, True, 0)
+        self.connectWlanADB = Gtk.Button(label='Connect via ADB to device wirelessly')
+        self.connectWlanADB.connect("clicked", self.on_adb_wlan_connect)
+        hbox.pack_start(self.connectWlanADB, True, True, 0)
+        self.disconnectAll = Gtk.Button(label="Disconnect all wirelessly connected devices")
+        self.disconnectAll.connect("clicked", self.on_all_disconnect)
+        hbox.pack_start(self.disconnectAll, True, True, 0)
+            
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
 
@@ -74,6 +106,10 @@ class GMInstaller(Gtk.Window):
         print("Task dialog closed")
 
         dialog.destroy()
+    
+    def on_all_disconnect(self, widget):
+        subprocess.run(['adb','disconnect'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        dialog = self.Finished(self)
 
     def on_fastboot_click(self, widget):
         subprocess.run(['adb', 'reboot', 'bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
@@ -86,7 +122,16 @@ class GMInstaller(Gtk.Window):
     def on_keycode_power(self, widget):
         subprocess.run(['adb','shell','input','keyevent','KEYCODE_POWER'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
-
+    
+    def on_screencast(self,widget):
+        os.system('adb shell screenrecord --output-format=h264 - | ffplay -framerate 60 -probesize 32 -sync video -')
+        dialog = self.Finished(self)
+        
+    def on_adb_wlan_connect(self,widget):
+        deviceIP = get_adb(self, "Please enter the IP address along with the port", "Connect to ADB via WiFi")
+        subprocess.run(['adb','connect',deviceIP], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        dialog = self.Finished(self)
+        
     def add_filters_recovery(self, dialog):
         filter_text = Gtk.FileFilter()
         filter_text.set_name("Recovery images")
