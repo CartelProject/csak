@@ -39,7 +39,7 @@ python3 csak/main.py
 - Connect to ADB via WiFi
 - Disconnect all WiFi ADB connected devices 
 - Now screencast your phone's display onto your laptop easily
-
+- Install apps via ADB
 
 ### Screenshot:
 ![CSAK](/assets/screenshot.png)
