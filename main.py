@@ -73,7 +73,10 @@ class GMInstaller(Gtk.Window):
         self.disconnectAll = Gtk.Button(label="Disconnect all wirelessly connected devices")
         self.disconnectAll.connect("clicked", self.on_all_disconnect)
         hbox.pack_start(self.disconnectAll, True, True, 0)
-            
+        self.appInstall = Gtk.Button(label="Install apps via ADB")
+        self.appInstall.connect("clicked", self.on_app_install)
+        hbox.pack_start(self.appInstall, True, True, 0)
+
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
 
@@ -106,7 +109,7 @@ class GMInstaller(Gtk.Window):
         print("Task dialog closed")
 
         dialog.destroy()
-    
+
     def on_all_disconnect(self, widget):
         subprocess.run(['adb','disconnect'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
@@ -131,7 +134,13 @@ class GMInstaller(Gtk.Window):
         deviceIP = get_adb(self, "Please enter the IP address along with the port", "Connect to ADB via WiFi")
         subprocess.run(['adb','connect',deviceIP], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
-        
+
+    def add_filters_app(self, dialog):
+        filter_text = Gtk.FileFilter()
+        filter_text.set_name("APK files")
+        filter_text.add_mime_type("application/vnd.android.package-archive")
+        dialog.add_filter(filter_text)
+
     def add_filters_recovery(self, dialog):
         filter_text = Gtk.FileFilter()
         filter_text.set_name("Recovery images")
@@ -289,6 +298,32 @@ class GMInstaller(Gtk.Window):
             print("WARN dialog closed by clicking CANCEL button")
 
         dialog.destroy()
+
+    def on_app_install(self, dialog):
+        dialog = Gtk.FileChooserDialog(
+            title="Please choose an APK file to install", parent=self, action=Gtk.FileChooserAction.OPEN
+        )
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
+        )
+
+        self.add_filters_app(dialog)
+
+        response = dialog.run()
+        final = ""
+        if response == Gtk.ResponseType.OK:
+            print("Open clicked")
+            print("File selected: " + dialog.get_filename())
+            final = dialog.get_filename()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancel clicked")
+
+        dialog.destroy()
+        subprocess.run(['adb','install',final], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        dialog = self.Finished(self)
 
 
 win = GMInstaller()
