@@ -127,7 +127,7 @@ class GMInstaller(Gtk.Window):
         dialog = self.Finished(self)
     
     def on_screencast(self,widget):
-        os.system('adb shell screenrecord --output-format=h264 - | ffplay -framerate 60 -probesize 32 -sync video -')
+        os.system('adb shell screenrecord --output-format=h264 - | ffplay -framerate 60 -probesize 32 -sync video - & watch -n 1 "pgrep ffplay || pkill -f \'adb shell\' "')
         dialog = self.Finished(self)
         
     def on_adb_wlan_connect(self,widget):
