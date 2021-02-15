@@ -55,9 +55,12 @@ class GMInstaller(Gtk.Window):
         self.recoveryFlash = Gtk.Button(label='Flash a recovery image')
         self.recoveryFlash.connect("clicked", self.on_recovery_flash)
         hbox.pack_start(self.recoveryFlash, True, True, 0)
-        self.romFlash = Gtk.Button(label='Flash a ZIP using sideload')
-        self.romFlash.connect("clicked", self.on_rom_flash)
-        hbox.pack_start(self.romFlash, True, True, 0)
+        self.romFlashSideload = Gtk.Button(label='Flash a ZIP using sideload')
+        self.romFlashSideload.connect("clicked", self.on_rom_adb_flash)
+        hbox.pack_start(self.romFlashSideload, True, True, 0)
+        self.romFlashFboot = Gtk.Button(label='Flash a ZIP using fastboot')
+        self.romFlashFboot.connect("clicked", self.on_rom_flash_fboot)
+        hbox.pack_start(self.romFlashFboot, True, True, 0)
         self.dataWipe = Gtk.Button(label='Wipe userdata')
         self.dataWipe.connect("clicked", self.on_data_wipe)
         hbox.pack_start(self.dataWipe, True, True, 0)
@@ -240,7 +243,7 @@ class GMInstaller(Gtk.Window):
 
         dialog.destroy()
 
-    def on_rom_flash(self, dialog):
+    def on_rom_flash_fboot(self, dialog):
         dialog = Gtk.FileChooserDialog(
             title="Please choose a file", parent=self, action=Gtk.FileChooserAction.OPEN
         )
@@ -277,7 +280,66 @@ class GMInstaller(Gtk.Window):
         if response == Gtk.ResponseType.OK:
             print("WARN dialog closed by clicking OK button")
             print(final)
-            subprocess.run(['adb','reboot','sideload-auto-reboot',final], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            subprocess.run(['adb','reboot','bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            time.sleep(10)
+            subprocess.run(['fastboot','update',final], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            dialog = Gtk.MessageDialog(
+                transient_for=self,
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text="Task completed successfully",
+            )
+            dialog.format_secondary_text(
+                "Successfully flashed zip via fastboot."
+            )
+            dialog.run()
+            print("INFO dialog closed")
+
+            dialog.destroy()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("WARN dialog closed by clicking CANCEL button")
+
+        dialog.destroy()
+
+    def on_rom_adb_flash(self, dialog):
+        dialog = Gtk.FileChooserDialog(
+            title="Please choose a file", parent=self, action=Gtk.FileChooserAction.OPEN
+        )
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
+        )
+
+        self.add_filters_rom(dialog)
+
+        response = dialog.run()
+        final = ""
+        if response == Gtk.ResponseType.OK:
+            print("Open clicked")
+            print("File selected: " + dialog.get_filename())
+            final = dialog.get_filename()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancel clicked")
+
+        dialog.destroy()
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.OK_CANCEL,
+            text="Caution",
+        )
+        dialog.format_secondary_text(
+            "The changes made are irreversible! Do you want to continue?"
+        )
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            print("WARN dialog closed by clicking OK button")
+            print(final)
+            subprocess.run(['adb','reboot','sideload-auto-reboot'], stdout=subprocess.PIPE).stdout.decode('utf-8')
             time.sleep(10)
             subprocess.run(['adb','sideload',final], stdout=subprocess.PIPE).stdout.decode('utf-8')
             dialog = Gtk.MessageDialog(

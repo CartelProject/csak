@@ -40,6 +40,7 @@ python3 csak/main.py
 - Disconnect all WiFi ADB connected devices 
 - Now screencast your phone's display onto your laptop easily
 - Install apps via ADB
+- Install compatible fastboot updatable zips. DO NOT CONFUSE THIS WITH THE NORMAL RECOVERY ZIPS THAT YOU GET!
 
 ### Screenshot:
 ![CSAK](/assets/screenshot.png)
