@@ -41,19 +41,12 @@ python3 csak/main.py
 - Now screencast your phone's display onto your laptop easily
 - Install apps via ADB
 - Install compatible fastboot updatable zips. DO NOT CONFUSE THIS WITH THE NORMAL RECOVERY ZIPS THAT YOU GET!
+- Flash images via fastboot.
 
 ### Screenshot:
 ![CSAK](/assets/screenshot.png)
 
-### Known Issues:
-- Screencast hangs after you close ffplay window
-```
-WORKAROUND
-- Ctrl+C in terminal window after you have closed ffplay window
-```
-
 ### In The Future
-- Will add support for fastboot flashing IMGs for system, vendor, odm and other partitions respectively.
 - Fix a bug where the script hangs due to process not completeing in time. Do not worry, if it hangs, DO NOT CANCEL THE SCRIPT OR FORCE CLOSE, OR IT MIGHT BRICK YOUR DEVICE IN THE PROCESS. Let the script complete, and check the terminal for progress.
 - Will add support for automatic TWRP downloading and flashing depending on the codename
 
