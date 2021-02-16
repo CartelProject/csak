@@ -61,6 +61,9 @@ class GMInstaller(Gtk.Window):
         self.romFlashFboot = Gtk.Button(label='Flash a ZIP using fastboot')
         self.romFlashFboot.connect("clicked", self.on_rom_flash_fboot)
         hbox.pack_start(self.romFlashFboot, True, True, 0)
+        self.imgFlashFboot = Gtk.Button(label='Flash an image using fastboot')
+        self.imgFlashFboot.connect("clicked", self.fastbootflashsep)
+        hbox.pack_start(self.imgFlashFboot, True, True, 0)
         self.dataWipe = Gtk.Button(label='Wipe userdata')
         self.dataWipe.connect("clicked", self.on_data_wipe)
         hbox.pack_start(self.dataWipe, True, True, 0)
@@ -136,6 +139,33 @@ class GMInstaller(Gtk.Window):
     def on_adb_wlan_connect(self,widget):
         deviceIP = get_adb(self, "Please enter the IP address along with the port", "Connect to ADB via WiFi")
         subprocess.run(['adb','connect',deviceIP], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        dialog = self.Finished(self)
+
+    def fastbootflashsep(self,widget):
+        devicepart = get_adb(self, "Please enter the partition you want to flash to (case-sensitive)", "Flash image")
+        dialog = Gtk.FileChooserDialog(
+            title="Please choose a file", parent=self, action=Gtk.FileChooserAction.OPEN
+        )
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
+        )
+
+        self.add_filters_recovery(dialog)
+
+        response = dialog.run()
+        final = ""
+        if response == Gtk.ResponseType.OK:
+            print("Open clicked")
+            print("File selected: " + dialog.get_filename())
+            final = dialog.get_filename()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancel clicked")
+
+        dialog.destroy()
+        subprocess.run(['fastboot','flash',devicepart,final], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
     def add_filters_app(self, dialog):
