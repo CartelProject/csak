@@ -42,6 +42,7 @@ python3 csak/main.py
 - Install apps via ADB
 - Install compatible fastboot updatable zips. DO NOT CONFUSE THIS WITH THE NORMAL RECOVERY ZIPS THAT YOU GET!
 - Flash images via fastboot.
+- Take logs easily via ADB.
 
 ### Screenshot:
 ![CSAK](/assets/screenshot.png)
