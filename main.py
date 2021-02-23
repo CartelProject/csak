@@ -82,6 +82,9 @@ class GMInstaller(Gtk.Window):
         self.appInstall = Gtk.Button(label="Install apps via ADB")
         self.appInstall.connect("clicked", self.on_app_install)
         hbox.pack_start(self.appInstall, True, True, 0)
+        self.getLogcat = Gtk.Button(label="Get logcat via ADB")
+        self.getLogcat.connect("clicked", self.on_get_logcat)
+        hbox.pack_start(self.getLogcat, True, True, 0)
 
     def on_about_device(self, widget):
         dialog = Gtk.MessageDialog(
@@ -140,6 +143,24 @@ class GMInstaller(Gtk.Window):
         deviceIP = get_adb(self, "Please enter the IP address along with the port", "Connect to ADB via WiFi")
         subprocess.run(['adb','connect',deviceIP], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
+
+    def on_get_logcat(self, widget):
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text="Getting a logcat via ADB",
+        )
+        dialog.format_secondary_text(
+            "The log will be saved in a file called logcat.txt in the same directory that CSAK is stored in. The script might hang because it is a continuous process with no end, so in order to stop capturing logs, Ctrl+C in the terminal window that you used to start CSAK."
+        )
+        dialog.run()
+        os.system('adb logcat > logcat.txt')
+        print("Task dialog closed")
+
+        dialog.destroy()
+
 
     def fastbootflashsep(self,widget):
         devicepart = get_adb(self, "Please enter the partition you want to flash to (case-sensitive)", "Flash image")
