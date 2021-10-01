@@ -447,9 +447,9 @@ class GMInstaller(Gtk.Window):
         subprocess.run(['adb','install',final], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
 
+def main():
+    win = GMInstaller()
+    win.connect("destroy",Gtk.main_quit)
 
-win = GMInstaller()
-win.connect("destroy",Gtk.main_quit)
-
-win.show_all()
-Gtk.main()
+    win.show_all()
+    Gtk.main()
