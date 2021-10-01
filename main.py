@@ -54,6 +54,9 @@ class GMInstaller(Gtk.Window):
         self.fastbootreboot = Gtk.Button(label='Reboot to Fastboot')
         self.fastbootreboot.connect("clicked", self.on_fastboot_click)
         hbox.pack_start(self.fastbootreboot, True, True, 0)
+        self.fastbootdreboot = Gtk.Button(label='Reboot to FastbootD')
+        self.fastbootdreboot.connect("clicked", self.on_fastbootd_click)
+        hbox.pack_start(self.fastbootdreboot, True, True, 0)
         self.recoveryFlash = Gtk.Button(label='Flash a recovery image')
         self.recoveryFlash.connect("clicked", self.on_recovery_flash)
         hbox.pack_start(self.recoveryFlash, True, True, 0)
@@ -128,7 +131,11 @@ class GMInstaller(Gtk.Window):
     def on_fastboot_click(self, widget):
         subprocess.run(['adb', 'reboot', 'bootloader'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
-
+        
+    def on_fastbootd_click(self, widget):
+        subprocess.run(['fastboot', 'reboot', 'fastboot'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        dialog = self.Finished(self)
+        
     def on_recovery_reboot(self, widget):
         subprocess.run(['adb', 'reboot', 'recovery'], stdout=subprocess.PIPE).stdout.decode('utf-8')
         dialog = self.Finished(self)
