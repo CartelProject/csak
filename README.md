@@ -26,7 +26,7 @@ $ brew install pygobject3 gtk+3
 - If you have not installed Python yet, install Python 3.8.x or above on your PC.
 - Run the following command to run the Python+GTK3.0 script:
 ```
-$ python3 csak/main.py
+$ python3 -m csak
 ```
 
 ### Features:
